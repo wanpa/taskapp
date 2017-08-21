@@ -40,13 +40,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     // 日付近い順\順でソート：降順
     // 以降内容をアップデートするとリスト内は自動的に更新される。
 
+    //category が検索するプロパティ名　=
+    //searchText が検索したい値
+    
     var taskArray = try! Realm().objects(Task.self).sorted(byKeyPath: "date", ascending: false)  // ←追加
+
     
     var searchResult = [String]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -166,9 +171,16 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             }
         }
     }
-    // Search文字が入力される度に呼ばれる
-    func updateSearchResults(for searchController: UISearchController) {
-        //code
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        taskArray = try! Realm().objects(Task.self).filter("category LIKE '\(searchText)*'")
+        tableView.reloadData()
+        //キーボード閉じる
+        serchTextBar.endEditing(true);
+
+        print("search 直後")
+        
     }
+
 }
 
